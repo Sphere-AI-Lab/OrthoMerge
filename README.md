@@ -71,6 +71,7 @@ For evaluation environments using [lmms-eval](https://github.com/EvolvingLMMs-La
 ```
 # For OFT models
 bash scripts/OrthoMerge_OFT_models.sh
+
 # For non-OFT models
 bash scripts/OrthoMerge_non_OFT_models.sh
 ```
