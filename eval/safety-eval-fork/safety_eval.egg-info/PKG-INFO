@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: safety-eval
+Version: 1.0
+Summary: safety-eval: A simple evaluation of generative language models and safety classifiers.
+Author: Allen Institute for AI
+Requires-Python: >=3.10
+License-File: LICENSE.md
+Dynamic: author
+Dynamic: license-file
+Dynamic: requires-python
+Dynamic: summary
