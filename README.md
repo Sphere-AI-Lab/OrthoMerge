@@ -43,7 +43,6 @@ We introduce a geometry-preserving model merging framework, called Orthogonal Mo
 
 
 ## Quick Start
-<!-- Please refer to the [evaluation guidelines](https://github.com/open-compass/VLMEvalKit/blob/main/docs/en/Quickstart.md) of [VLMEvalKit](https://github.com/open-compass/VLMEvalKit) -->
 
 ### Installation
 ```
@@ -51,17 +50,26 @@ git clone https://github.com/Sphere-AI-Lab/OrthoMerge.git
 conda create -n OrthoMerge python=3.10 -y
 conda activate OrthoMerge
 cd OrthoMerge
-pip install -e .
+pip install -r requirements.txt
 ```
 
 ### Merge
 ```
+# For OFT models
+bash scripts/OrthoMerge_OFT_models.sh
 
+# For non-OFT models
+bash scripts/OrthoMerge_non_OFT_models.sh
 ```
 
 ### Evaluation
-```
+For evaluation environments using [lmms-eval](https://github.com/EvolvingLMMs-Lab/lmms-eval/tree/main), [lm-eval-harness](https://github.com/EleutherAI/lm-evaluation-harness), [bigcode-eval](https://github.com/bigcode-project/bigcode-evaluation-harness), and [safety-eval](https://github.com/nouhadziri/safety-eval-fork), please follow the setup instructions provided in their respective repositories.
 
+```
+# For OFT models
+bash scripts/OrthoMerge_OFT_models.sh
+# For non-OFT models
+bash scripts/OrthoMerge_non_OFT_models.sh
 ```
 
 

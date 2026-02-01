@@ -1,8 +1,8 @@
 #!/bin/bash
 
-MODEL=$1
-GPU_ID=$2
-OUTPUT_PATH=$3
+MODEL=pathToModel
+GPU_ID=0
+OUTPUT_PATH=pathToResult
 
 echo $MODEL
 echo $GPU_ID
