@@ -24,6 +24,7 @@
 
 
 <p align="center">
+  <a href="https://ortho-merge.github.io/">🌐 Homepage</a> |
   <a href="https://arxiv.org/pdf/">📑 Paper</a>  |
   <a href="https://arxiv.org/abs/">📖 arXiv</a> |
   <a href="https://huggingface.co/collections/SphereLab/orthomerge">🤗 Models</a> 

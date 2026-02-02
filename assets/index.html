@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FDA</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script id="MathJax-script" async 
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+   <style>
+    /* principle 环境样式（外观类似 LaTeX 定理环境） */
+    .principle {
+      max-width: 900px;
+      margin: 1.5em auto;
+      padding: 0.9em 1.1em;
+      background: #ffffff;
+      border-left: 6px solid #2b6cb0; /* 左侧彩色条 */
+      box-shadow: 0 2px 8px rgba(20,20,20,0.04);
+      border-radius: 6px;
+      font-family: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color: #111;
+      line-height: 1.6;
+    }
+
+    .principle-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6em;
+      margin-bottom: 0.4em;
+    }
+
+    .principle-label {
+      font-weight: 700;
+      color: #0b5394;
+      font-size: 0.95em;
+    }
+
+    .principle-title {
+      font-weight: 600;
+      font-size: 1.02em;
+      color: #111;
+    }
+
+    .principle-body {
+      margin-top: 0.35em;
+      font-size: 0.98em;
+      color: #2c2c2c;
+      text-align: justify;
+    }
+
+    /* 可选：数学公式居中显示时的样式 */
+    .principle .mjx-display {
+      text-align: center;
+      margin: 0.6em 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Orthogonal Model Merging</h1>
+    <p class="authors">Sihan Yang, Kexuan Shi, Weiyang Liu<sup>1</sup></p>
+    <p class="affiliations">
+      The Chinese University of Hong Kong
+    </p>
+    <div class="links">
+      <a href="https://arxiv.org/pdf/" class="button">Paper</a>
+      <a href="https://github.com/Sphere-AI-Lab/OrthoMerge" class="button" target="_blank">Code</a>
+      <a href="https://huggingface.co/collections/SphereLab/orthomerge" class="button">Model</a>
+    </div>
+  </header>
+
+  <img src="assets/teaser.png" alt="FDA Illustration" width="48%" 
+     style="display: block; margin: 0 auto;">
+  <section id="abstract" style="text-align: center;">
+    <h2 style="border-bottom: none; margin-bottom: 0.5em;">
+      FDA: A New Framework for Model Merging
+    </h2>
+    <p style="max-width: 800px; margin: 0 auto; text-align: justify;">
+      Model Merging has been an intriguing post-training strategy for integrating knowledge 
+      from existing checkpoints of a shared foundation model. Existing methods focus on 
+      operations in the parameter space (i.e., task vectors), thereby suffering from the complexity 
+      of the parameter space. To explore more knowledge utilizations, we propose 
+      <b><i>Functional Dual Anchors (FDAs)</i></b>, a framework (Figure 1) that instead models 
+      the knowledge in the input-representation space. Specifically, FDAs are synthetic inputs 
+      whose induced gradients align with task vectors, capturing task-specific functional shifts 
+      relative to the pretrained model. Then, we use the FDAs to adapt the pretrained model. FDAs provide an alternative perspective on 
+      model merging by extending input-space modeling to this setting and bridging joint 
+      multi-task training and post-hoc merging.
+    </p>
+  </section>
+
+<section id="intuition" style="text-align: center; margin-top: 3em;">
+  <div style="
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    width: 100vw;
+    background-color: #f5f5f5;
+    padding: 0.8em 0;
+  ">
+    <h2 style="border-bottom: none; margin: 0; font-size: 2em;">
+      Intuitive Understanding and Motivation of FDA
+    </h2>
+  </div>
+</section>
+
+      <div style="max-width: 900px; margin: 0 auto; text-align: justify; overflow: hidden;">
+      
+        <img src="method.png" 
+             alt="FDA Loss Landscape"
+             style="float: right; width: 40%; margin-left: 1em; margin-top: 1em;border-radius: 8px; vertical-align: top;">
+      
+          <p>
+            To gain an intuitive understanding of FDAs, we compare their optimization trajectories with those of task arithmetic in Figure 2.
+            We treat the obtained FDAs as finetuning data and optimize the model parameters accordingly.
+            As shown in the right figure, optimizing with FDAs moves the model closer to the local minima of the loss landscape (computed over eight downstream datasets).
+            While task vectors provide useful guidance from the pretrained model, they quickly drift away from the loss basin,
+            whereas FDAs consistently guide optimization toward more favorable regions.
+            Moreover, by capturing functional shifts in the input space, FDAs offer greater robustness for model merging.
+            Unlike task vectors, which are sensitive to initialization and can drift under different starting points,
+            FDAs exhibit robustness to such variations, facilitating more reliable model merging.
+          </p>
+
+         <p>
+        Another motivation behind FDAs is that modeling the input
+        space is generally easier than modeling the parameter space, as the input space tends to be more
+        structured. The effectiveness of modeling the input space for knowledge transfer has been extensively
+        explored and empirically validated in the context of dataset distillation
+        (<sup><a href="#ref-wang2018b">Wang et al., 2018b</a></sup>;
+        <sup><a href="#ref-cazenavette2022">Cazenavette et al., 2022</a></sup>),
+        iterative teaching (<sup><a href="#ref-liu2017a">Liu et al., 2017a</a></sup>;
+        <sup><a href="#ref-qiu2023">Qiu et al., 2023</a></sup>),
+        dataset condensation (<sup><a href="#ref-zhao2021">Zhao et al., 2021</a></sup>;
+        <sup><a href="#ref-zhao2023">Zhao & Bilen, 2023</a></sup>)
+        and continual learning (<sup><a href="#ref-shin2017">Shin et al., 2017</a></sup>;
+        <sup><a href="#ref-yu2023">Yu et al., 2023</a></sup>).
+      </p>
+      
+      </div>
+</section>
+
+    <section id="performance" style="text-align: center; margin-top: 3em;">
+  <div style="
+    position: relative;
+    left: 50%;
+    margin-left: -50vw;
+    width: 100vw;
+    background-color: #f5f5f5;
+    padding: 0.8em 0;
+    box-sizing: border-box;
+  ">
+    <h2 style="border-bottom: none; margin: 0; font-size: 2em;">
+      FDAs Provide More Flexible and Robust Merging Direction
+    </h2>
+  </div>
+</section>
+<div style="max-width: 800px; margin: 1em auto;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; margin: 0 auto;">
+  <thead style="background-color: #f5f5f5;">
+    <tr>
+      <th style="border: 1px solid #ddd; padding: 6px;">Method</th>
+      <th>CoLA</th><th>SST-2</th><th>MRPC</th><th>STS-B</th><th>QQP</th>
+      <th>MNLI</th><th>QNLI</th><th>RTE</th><th>Avg</th><th>&Delta;</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr><td style="text-align:left;">Pretrained</td><td>0.1679</td><td>0.4897</td><td>0.7480</td><td>-0.0471</td><td>0.3159</td><td>0.3545</td><td>0.5054</td><td>0.4693</td><td>0.3754</td><td>-</td></tr>
+    <tr><td style="text-align:left;">Individual</td><td>0.6335</td><td>0.9001</td><td>0.9224</td><td>0.9418</td><td>0.9055</td><td>0.8267</td><td>0.9507</td><td>0.9222</td><td>0.8754</td><td>-</td></tr>
+
+    <tr><td colspan="11" style="border-bottom:1px solid #bbb;"></td></tr>
+
+    <tr><td style="text-align:left;">TA</td><td>0.1635</td><td>0.8716</td><td>0.7480</td><td>0.6603</td><td>0.3159</td><td>0.6101</td><td>0.8716</td><td>0.7366</td><td>0.5918</td><td>-</td></tr>
+    <tr><td style="text-align:left;">TSV</td><td>0.4791</td><td>0.9323</td><td>0.7459</td><td>0.6660</td><td>0.3300</td><td>0.6750</td><td>0.7761</td><td>0.6751</td><td>0.6599</td><td>-</td></tr>
+    <tr><td style="text-align:left;">WUDI</td><td>0.4201</td><td>0.9232</td><td>0.7487</td><td>0.7345</td><td>0.5393</td><td>0.6430</td><td>0.5746</td><td>0.5740</td><td>0.6447</td><td>-</td></tr>
+
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDAs (Pretrained, Gauss)</td><td>0.3198</td><td>0.8463</td><td>0.7790</td><td>0.6828</td><td><b>0.7423</b></td><td>0.5605</td><td>0.6021</td><td><b>0.7726</b></td><td>0.6632</td><td style="color:#006400;">+0.2878</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDAs (Pretrained, Weight)</td><td>0.3883</td><td>0.8911</td><td><b>0.7858</b></td><td>0.7230</td><td>0.7410</td><td>0.5791</td><td>0.6207</td><td>0.7329</td><td>0.6827</td><td style="color:#006400;">+0.3073</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDAs (TA, Gauss)</td><td>0.4043</td><td><b>0.9461</b></td><td>0.7692</td><td>0.7897</td><td>0.6916</td><td>0.7190</td><td>0.7487</td><td>0.7076</td><td><b>0.7220</b></td><td style="color:#006400;">+0.1302</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDAs (TA, Weight)</td><td>0.4511</td><td>0.9404</td><td>0.7578</td><td>0.7926</td><td>0.6518</td><td><b>0.7411</b></td><td>0.6965</td><td>0.7148</td><td>0.7183</td><td style="color:#006400;">+0.1265</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDAs (TSV, Gauss)</td><td><b>0.5036</b></td><td>0.9438</td><td>0.7521</td><td><b>0.7975</b></td><td>0.4128</td><td>0.7075</td><td><b>0.8477</b></td><td>0.7365</td><td>0.7127</td><td style="color:#006400;">+0.0528</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDAs (TSV, Weight)</td><td>0.5021</td><td>0.9427</td><td>0.7490</td><td>0.7418</td><td>0.5062</td><td>0.7292</td><td>0.8146</td><td>0.7365</td><td>0.7153</td><td style="color:#006400;">+0.0554</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDAs (WUDI, Gauss)</td><td>0.4841</td><td>0.9404</td><td>0.7647</td><td>0.7645</td><td>0.6778</td><td>0.7004</td><td>0.5911</td><td>0.6643</td><td>0.6984</td><td style="color:#006400;">+0.0537</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDAs (WUDI, Weight)</td><td>0.4848</td><td>0.9392</td><td>0.7573</td><td>0.7546</td><td>0.6979</td><td>0.7072</td><td>0.5656</td><td>0.6643</td><td>0.6964</td><td style="color:#006400;">+0.0517</td></tr>
+  </tbody>
+</table>
+  </div>
+
+<p style="font-size: 11px; color: #555; text-align: center; max-width: 900px; margin: 0 auto; margin-top: 0.5em;">
+  Performance of merging RoBERTa-Large models across eight NLU tasks. The second section (from RegMean to ProDistill) includes methods that use task-specific data, 
+  and the third section is data-free methods. “FDA (<i>init model</i>, <i>FDA init</i>)” denotes the choice of the initial model and the initialization strategies 
+  for FDAs, respectively. “Δ” denotes the performance improvement compared to the initial model.
+</p>
+<div style="max-width: 800px; margin: 1em auto;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; margin: 0 auto;">
+  <thead style="background-color: #f5f5f5;">
+    <tr>
+      <th style="border: 1px solid #ddd; padding: 6px;">Method</th>
+      <th>SUN397</th><th>Cars</th><th>RESISC45</th><th>EuroSAT</th>
+      <th>SVHN</th><th>GTSRB</th><th>MNIST</th><th>DTD</th>
+      <th>Avg</th><th>&Delta;</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr><td style="text-align:left;">Pretrained</td><td>63.80</td><td>64.60</td><td>65.70</td><td>54.50</td><td>52.00</td><td>43.30</td><td>51.70</td><td>45.10</td><td>55.00</td><td>-</td></tr>
+    <tr><td style="text-align:left;">Individual</td><td>78.56</td><td>87.08</td><td>96.92</td><td>99.78</td><td>97.86</td><td>99.17</td><td>99.76</td><td>82.07</td><td>92.65</td><td>-</td></tr>
+
+    <tr><td colspan="11" style="border-bottom:1px solid #bbb;"></td></tr>
+
+    <tr><td style="text-align:left;">TA</td><td>62.07</td><td>66.14</td><td>74.00</td><td>76.48</td><td>88.02</td><td>73.79</td><td>98.52</td><td>52.50</td><td>73.94</td><td>-</td></tr>
+    <tr><td style="text-align:left;">TSV</td><td>72.83</td><td>80.20</td><td>88.97</td><td>97.22</td><td>93.93</td><td>93.94</td><td>99.27</td><td>72.66</td><td>87.38</td><td>-</td></tr>
+    <tr><td style="text-align:left;">WUDI</td><td>75.40</td><td>81.71</td><td>90.14</td><td>98.52</td><td><b>95.30</b></td><td><b>96.55</b></td><td><b>99.44</b></td><td>73.78</td><td>88.85</td><td>-</td></tr>
+
+    <!-- 灰色高亮行：FDA 系列 -->
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDA (Pretrained, Gauss)</td><td>72.54</td><td>80.62</td><td>87.75</td><td>98.44</td><td>94.31</td><td>93.43</td><td>99.38</td><td>70.11</td><td>87.07</td><td style="color:#006400;">+32.07</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDA (Pretrained, Weight)</td><td>73.60</td><td>80.48</td><td>88.00</td><td>98.26</td><td>94.35</td><td>93.41</td><td>99.31</td><td>70.64</td><td>87.26</td><td style="color:#006400;">+32.26</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDA (TA, Gauss)</td><td>73.72</td><td>81.42</td><td>88.63</td><td>98.37</td><td>94.61</td><td>94.44</td><td>99.39</td><td>71.54</td><td>87.77</td><td style="color:#006400;">+13.83</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDA (TA, Weight)</td><td>74.53</td><td>81.25</td><td>88.37</td><td>98.37</td><td>94.55</td><td>94.28</td><td>99.34</td><td>71.65</td><td>87.79</td><td style="color:#006400;">+13.85</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDA (TSV, Gauss)</td><td>74.79</td><td>82.65</td><td>89.75</td><td>98.37</td><td>94.25</td><td>94.47</td><td>99.40</td><td>73.67</td><td>88.42</td><td style="color:#006400;">+1.04</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDA (TSV, Weight)</td><td>74.93</td><td>81.92</td><td>89.79</td><td>98.33</td><td>94.10</td><td>93.78</td><td>99.36</td><td>73.78</td><td>88.25</td><td style="color:#006400;">+0.87</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDA (WUDI, Gauss)</td><td><b>76.21</b></td><td><b>82.84</b></td><td>91.03</td><td><b>98.93</b></td><td>94.58</td><td>96.32</td><td>99.40</td><td><b>74.52</b></td><td><b>89.23</b></td><td style="color:#006400;">+0.38</td></tr>
+    <tr style="background-color:#f0f0f0;"><td style="text-align:left;">FDA (WUDI, Weight)</td><td>76.15</td><td>82.75</td><td><b>91.21</b></td><td>98.89</td><td>94.49</td><td>96.24</td><td>99.39</td><td>74.41</td><td>89.19</td><td style="color:#006400;">+0.34</td></tr>
+  </tbody>
+</table>
+</div>
+  
+
+<p style="font-size: 11px; color: #555; text-align: center; max-width: 900px; margin: 0 auto; margin-top: 0.5em;">
+  Performance of merging ViT-B-16 models across eight downstream vision tasks. The second section (from RegMean to ProDistill) includes methods that use task-specific data, 
+  and the third section is data-free methods. “FDA (<i>init model</i>, <i>FDA init</i>)” denotes the choice of the initial model and the initialization strategies 
+  for FDAs, respectively. “Δ” denotes the performance improvement compared to the initial model.
+</p>
+
+
+  <p style="max-width: 800px; margin: 0 auto; text-align: justify;">
+ To validate the effectiveness of the merging direction provided by FDAs, we use FDAs to adapt the pretrained model and compare the multi-task performance 
+with its dual framework (i.e., task vectors, TA). To show the robustness, we initialize the pretrained model by the merged parameters, which are derived from data-free
+task-vector-based methods. We consider three data-free methods, TA(<sup><a href="#ref-Ilharco2022">Ilharco et al., 2022</a></sup>), TSVM(<sup><a href="#ref-Gargiulo2025">Gargiulo et al., 2025</a></sup>), WUDI(<sup><a href="#ref-Cheng2025">Cheng et al., 2025</a></sup>). The former one is the classical method, while the latter two are the 
+current state-of-the-art methods. We present partial results in the above tables. More results can be found in our paper. From the results, we have two key observations:
+    <div style="max-width: 800px; margin: 1.5em auto; text-align: justify;">
+  <p><b>Observation 1 – FDAs can effectively leverage existing task-specific knowledge for multi-task modelmerging:</b> 
+  Comparing to the dual framework TA, FDAs bring a significant improvement:
+the multi-task performance of pretrained model adapted by FDAs achieves 87.26, compared with
+73.94 of TA, representing an improvement of nearly 18%; meanwhile, the average GLUE score
+achieves 15.4% improvement. 
+  </p>
+  <p><b>Observation 2 – Flexible knowledge modeling:</b> although FDAs
+and data-free parameter-centric methods leverage
+the same task-specific knowledge, FDAs still im-
+prove the merged models by these methods. The
+average improvement via FDAs on TA, TSV, and
+WUDI is nearly 5.10% on ViT-B/16, and about 13% on RoBERTa-Large.  </p>
+</div>
+  </p>
+</section>
+
+<section id="algorithm" style="text-align: center; margin-top: 3em;">
+    <div style="
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    width: 100vw;
+    background-color: #f5f5f5;
+    padding: 0.8em 0;
+  ">
+    <h2 style="border-bottom: none; margin: 0; font-size: 2em;">
+      A Practical Algorithm for FDAs
+    </h2>
+  </div>
+
+  <p style="max-width: 800px; margin: 0 auto; text-align: justify;">
+The practical algorithms for FDAs involve two main stages: constructing FDAs and adapting with FDAs.
+In the first stage, FDAs are built for each downstream checkpoint. This stage can be deemed as projecting task-specific knowledge into the input–representation space.
+In the second stage, these FDAs are used to adapt the model, i.e., integrate knowledge across multiple tasks.
+  </p>
+
+  <div style="max-width: 800px; margin: 2em auto 0 auto; text-align: justify;">
+    <h3 style="text-align: left; margin-bottom: 0.5em;">1. Construction</h3>
+<p>
+  Given the pretrained model $\varphi(\boldsymbol{\theta}_0)$ and the corresponding finetuned checkpoint 
+  $\varphi(\boldsymbol{\theta}_i)$, we construct the FDAs $\{\boldsymbol{x}_{ij}\}_{j=1}^n$ for $\varphi(\boldsymbol{\theta}_i)$
+  via solving the following optimization problem:
+</p>
+$$
+\min_{\mathbf{x}_{i1},\dots,\mathbf{x}_{in}} 
+\mathrm{cos\_dist}\!\Bigg(
+\nabla_{\boldsymbol{\theta}}\!\sum_{j=1}^n 
+\mathrm{Dist}\!\big(\varphi(\boldsymbol{\theta}, \mathbf{x}_{ij}), 
+\varphi(\boldsymbol{\theta}_i, \mathbf{x}_{ij})\big)
+\Big|_{\boldsymbol{\theta}=\boldsymbol{\theta}_0}, 
+\boldsymbol{\tau}_i
+\Bigg)
+$$
+
+<p>
+where $\mathrm{cos\_dist}(\mathbf{A},\mathbf{B}) = 1 - 
+\frac{\mathrm{vec}(\mathbf{A})^\top \mathrm{vec}(\mathbf{B})}
+{\|\mathbf{A}\|_F \|\mathbf{B}\|_F}$, 
+$\mathrm{vec}$ denotes the operation that vectorizes a matrix into a vector 
+in row-major order, and $\mathrm{Dist}(\cdot)$ denotes a differentiable distance 
+function measuring the representation discrepancy between 
+$\varphi(\boldsymbol{\theta}_0)$ and $\varphi(\boldsymbol{\theta}_i)$. 
+</p>
+<p>
+  The gradient-based iterative optimization methods are adopted. It is well known that gradient-based methods are sensitive to initialization. Thus, we analyze the optimization dynamics of anchors on a linear encoder and derive a principle for
+  initialization. 
+  <div class="principle" role="region" aria-labelledby="principle-1-title">
+    <div class="principle-header">
+      <div class="principle-label">Principle</div>
+      <div id="principle-1-title" class="principle-title"></div>
+    </div>
+
+    <div class="principle-body">
+      <p>
+        An effective initialization strategy should limit the energy of the initialization point within the tail subspace spanned by the task vector.
+      </p>
+    </div>
+  </div>
+</p>
+    <p>
+      Based on this principle, we derive two practical initialization schemes: linear weight sampling $\boldsymbol{x}_{ij}=(\boldsymbol{W}_i)_{l_j,:}$ and scaled Gaussian sampling $\boldsymbol{x}_{ij} = \sigma \cdot \tilde{\boldsymbol{x}}_{ij},
+\tilde{\boldsymbol{x}}_{ij} \sim \mathcal{N}(\mathbf{0}, \boldsymbol{I}_d)$, where $\boldsymbol{W}$ denotes the weight matrix. 
+    </p>
+  </div>
+
+  <div style="max-width: 800px; margin: 2em auto 0 auto; text-align: justify;">
+    <h3 style="text-align: left; margin-bottom: 0.5em;">2. Adaptation</h3>
+    <p>
+      The adaptation process with FDAs is the dual process of the above Construction process. When the merged model is initialized by the pretrained checkpoint,
+      the adaptation process is to optimize the following objective:
+      $$
+\min_{\boldsymbol{\theta_0}} 
+\sum_{i=1}^m \sum_{j=1}^{n} 
+\mathrm{Dist}\!\Big( 
+\varphi(\boldsymbol{\theta_0}, \mathbf{x}_{ij}),
+\varphi(\boldsymbol{\theta}_i, \mathbf{x}_{ij})
+\Big).
+$$
+When the merged model is initialized by the merged parameters from task-vector-based methods, the adaptation process is to refine the merged task vectors. The objective
+      is as follows:
+      $$
+\min_{\{\phi(\boldsymbol{\tau}_i)\}_{i=1}^m} 
+\sum_{i=1}^m \sum_{j=1}^{n} 
+\mathrm{Dist}\!\Big( 
+\varphi \big(\boldsymbol{\theta} + \sum_{i=1}^m \phi_i(\boldsymbol{\tau}_i), \mathbf{x}_{ij}\big),
+\varphi(\boldsymbol{\theta}_i, \mathbf{x}_{ij})
+\Big).
+$$ 
+  </p>
+  </div>
+</section>
+
+
+    <section id="knowledge" style="text-align: center; margin-top: 3em;">
+    <div style="
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    width: 100vw;
+    background-color: #f5f5f5;
+    padding: 0.8em 0;
+  ">
+    <h2 style="border-bottom: none; margin: 0; font-size: 2em;">
+      Knowledge encoded in the FDAs
+    </h2>
+  </div>
+      
+  <p style="max-width: 800px; margin: 0 auto; text-align: justify;">
+Since FDAs projects the task-specific knowledge into the input-representation space, we investigate the knowledge encoded by FDAs. We made three 
+interesting observations.
+  </p>
+<div style="max-width: 800px; margin: 1.5em auto; text-align: justify;">
+  <p><b>Observation 1 – FDAs evolve into a long-tailed spectrum structure during optimization:</b> We perform SVD on the FDA matrices and normalize singular values by the largest one. From the Figure 3, the normalized tail
+   singular values decays rapidly in construction process for different initializations. This phenomenon is reasonable, as task-specific knowledge absorption often manifests as a long-tailed, low-rank structure in the parameter space as well. </p>
+  <figure style="text-align: center; margin: 1em 0;">
+    <img src="assets/singular_values.png" alt="SVD spectrum of FDAs" style="width: 90%; border: 1px solid #ccc; border-radius: 8px;">
+  </figure>
+
+  <p><b>Observation 2 – The high-energy subspaces of FDAs gradually aligns with that of real data:</b> Considering the long-tailed structure of FDAs, we measure subspace similarity of top $20\%$ singular vectores between real data and FDAs via Projection Matrix. From the examples in Figure 4, the similarity
+  gradually increases as the optimization proceeds. This suggests a potential connection between the knowledge encoded in FDAs and the real task data. </p>
+
+  <figure style="text-align: center; margin: 1em 0;">
+    <img src="assets/subspace_similarity.png" alt="Subspace of FDAs" style="width: 90%; border: 1px solid #ccc; border-radius: 8px;">
+  </figure>
+  
+  <p><b>Observation 3 – FDAs-induced adaptation increasingly aligns with that induced by real data:</b> We analyze FDAs here by re-projecting them into the parameter space, i.e., the adaptation they induce. We project the FDA-induced adaptation onto a non-negative cone spanned by parameter updation vectors derived from real data. As shown in Figure 5,
+  the projection energy gradually increases in both pretrained model and merged model. This indicates that FDAs progressively produce the robust task-specific functional shifts.
+  </p>
+
+    <figure style="text-align: center; margin: 1em 0;">
+    <img src="assets/projection_energy.png" alt="energy of FDAs" style="width: 90%; border: 1px solid #ccc; border-radius: 8px;">
+  </figure>
+</div>
+
+</section>
+
+  <!-- <section id="citation">
+    <h2>BibTeX</h2>
+    <pre>
+@inproceedings{shi2026fda,
+  title={MODEL MERGING WITH FUNCTIONAL DUAL ANCHORS},
+  author={Shi, Kexuan and Wen, Yandong and Liu, Weiyang},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2026}
+}
+    </pre>
+  </section> -->
+
+    <section id="references" style="text-align:left; max-width:800px; margin: 2em auto;">
+  <h3>References</h3>
+  <ol>
+    <li id="ref-wang2018b">Tongzhou Wang, Jun-Yan Zhu, Antonio Torralba, and Alexei A Efros. Dataset distillation. </li>
+    <li id="ref-cazenavette2022">George Cazenavette, Tongzhou Wang, Antonio Torralba, Alexei A Efros, and Jun-Yan Zhu. Dataset
+distillation by matching training trajectories. </li>
+    <li id="ref-liu2017a">Weiyang Liu, Bo Dai, Ahmad Humayun, Charlene Tay, Chen Yu, Linda B Smith, James M Rehg,
+and Le Song. Iterative machine teaching. </li>
+    <li id="ref-qiu2023"> Zeju Qiu, Weiyang Liu, Tim Z Xiao, Zhen Liu, Umang Bhatt, Yucen Luo, Adrian Weller, and
+Bernhard Sch¨olkopf. Iterative teaching by data hallucination. </li>
+    <li id="ref-zhao2021">Bo Zhao, Konda Reddy Mopuri, and Hakan Bilen. Dataset condensation with gradient matching. </li>
+    <li id="ref-zhao2023">Bo Zhao and Hakan Bilen. Dataset condensation with distribution matching.</li>
+    <li id="ref-shin2017">Hanul Shin, Jung Kwon Lee, Jaehong Kim, and Jiwon Kim. Continual learning with deep generative
+replay. </li>
+    <li id="ref-yu2023">Longhui Yu, Tianyang Hu, Lanqing Hong, Zhen Liu, Adrian Weller, and Weiyang Liu. Continual
+learning by modeling intra-class variation.</li>
+    <li id="ref-Ilharco2022">Gabriel Ilharco, Marco Tulio Ribeiro, Mitchell Wortsman, Suchin Gururangan, Ludwig Schmidt,
+Hannaneh Hajishirzi, and Ali Farhadi. Editing models with task arithmetic.</li>
+    <li id="ref-Gargiulo2025">Antonio Andrea Gargiulo, Donato Crisostomi, Maria Sofia Bucarelli, Simone Scardapane, Fabrizio
+Silvestri, and Emanuele Rodola. Task singular vectors: Reducing task interference in model merging.</li>
+      <li id="ref-Cheng2025">Runxi Cheng, Feng Xiong, Yongxian Wei, Wanyun Zhu, and Chun Yuan. Whoever started the
+interference should end it: Guiding data-free model merging via task vectors.</li>
+  </ol>
+</section>
+
+  <footer>
+    <p>This website is adapted from Nerfies, MathVista and SGP-Bench, licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.</p>
+  </footer>
+</body>
+</html>
