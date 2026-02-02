@@ -215,7 +215,7 @@ interesting observations.
     box-sizing: border-box;
   ">
     <h2 style="border-bottom: none; margin: 0; font-size: 2em;">
-      OrthoMerge Maintains Model Performance across Diverse Tasks and Mitigate Catastrophic Forgetting.
+      OrthoMerge Maintains Model Performance across Diverse Tasks and Mitigate Catastrophic Forgetting
     </h2>
   </div>
 </section>
@@ -305,24 +305,7 @@ interesting observations.
      
 
   <p style="max-width: 800px; margin: 0 auto; text-align: justify;">
- To validate the effectiveness of the merging direction provided by FDAs, we use FDAs to adapt the pretrained model and compare the multi-task performance 
-with its dual framework (i.e., task vectors, TA). To show the robustness, we initialize the pretrained model by the merged parameters, which are derived from data-free
-task-vector-based methods. We consider three data-free methods, TA(<sup><a href="#ref-Ilharco2022">Ilharco et al., 2022</a></sup>), TSVM(<sup><a href="#ref-Gargiulo2025">Gargiulo et al., 2025</a></sup>), WUDI(<sup><a href="#ref-Cheng2025">Cheng et al., 2025</a></sup>). The former one is the classical method, while the latter two are the 
-current state-of-the-art methods. We present partial results in the above tables. More results can be found in our paper. From the results, we have two key observations:
-    <div style="max-width: 800px; margin: 1.5em auto; text-align: justify;">
-  <p><b>Observation 1 – FDAs can effectively leverage existing task-specific knowledge for multi-task modelmerging:</b> 
-  Comparing to the dual framework TA, FDAs bring a significant improvement:
-the multi-task performance of pretrained model adapted by FDAs achieves 87.26, compared with
-73.94 of TA, representing an improvement of nearly 18%; meanwhile, the average GLUE score
-achieves 15.4% improvement. 
-  </p>
-  <p><b>Observation 2 – Flexible knowledge modeling:</b> although FDAs
-and data-free parameter-centric methods leverage
-the same task-specific knowledge, FDAs still im-
-prove the merged models by these methods. The
-average improvement via FDAs on TA, TSV, and
-WUDI is nearly 5.10% on ViT-B/16, and about 13% on RoBERTa-Large.  </p>
-</div>
+    OrthoMerge consistently delivers strong multi-task performance while preserving or even enhancing base model generalization. Across both OFT-finetuned and standard (LoRA/full) finetuned models, OrthoMerge outperforms Euclidean baselines on in-domain tasks and on out-of-domain benchmarks. In several settings, the merged model surpasses the average performance of individual experts, indicating constructive integration rather than destructive interference. Our Orthogonal-Residual Decoupling further boosts existing merging methods (TA, TIES, TSV-M), improving task accuracy and mitigating catastrophic forgetting. These gains extend to vision-language models, where OrthoMerge unifies spatial reasoning, OCR, and medical multimodal capabilities while better retaining general instruction-following and multimodal performance compared to standard merging approaches.
   </p>
 </section>
 
