@@ -186,16 +186,13 @@ interesting observations.
     Loss landscape of the base model, TA, and OrthoMerge.
   </figcaption>
   </figure>
-  <p><b>Better Loss Landscape.</b> We perform SVD on the FDA matrices and normalize singular values by the largest one. From the Figure 3, the normalized tail
-   singular values decays rapidly in construction process for different initializations. This phenomenon is reasonable, as task-specific knowledge absorption often manifests as a long-tailed, low-rank structure in the parameter space as well. </p>
+  <p><b>Better Loss Landscape.</b> We illustrate the locations of the base model, as well as models merged by the classical Euclidean method TA and our OrthoMerge, on the joint loss landscape of all merged tasks. OrthoMerge achieves a more favorable loss location in terms of both optimization direction and magnitude compared to TA. The results validate that performing merging on the Riemannian manifold induced by the orthogonal group can better preserve model knowledge and reduce destructive interference.</p>
 
-  <p><b>Hyperspherical Energy Preservation. </b> Considering the long-tailed structure of FDAs, we measure subspace similarity of top $20\%$ singular vectores between real data and FDAs via Projection Matrix. From the examples in Figure 4, the similarity
-  gradually increases as the optimization proceeds. This suggests a potential connection between the knowledge encoded in FDAs and the real task data. </p>
+  <p><b>Hyperspherical Energy Preservation. </b>OrthoMerge effectively mitigates catastrophic forgetting by preserving hyperspherical energy. Unlike conventional Euclidean-space merging methods that disrupt the model’s geometric structure and increase forgetting, OrthoMerge keeps the hyperspherical energy unchanged. As a result, it not only delivers the best in-domain performance but also generalizes better to out-of-distribution tasks, showing a clear reduction in catastrophic forgetting. </p>
 
 
   
-  <p><b>Spectral Regularization. </b> We analyze FDAs here by re-projecting them into the parameter space, i.e., the adaptation they induce. We project the FDA-induced adaptation onto a non-negative cone spanned by parameter updation vectors derived from real data. As shown in Figure 5,
-  the projection energy gradually increases in both pretrained model and merged model. This indicates that FDAs progressively produce the robust task-specific functional shifts.
+  <p><b>Spectral Regularization. </b> OrthoMerge also brings natural regularization to the spectral norm of the model weights. By merging in a way that always results in an orthogonal transformation, OrthoMerge ensures the spectral norm of the weights remains constant, no matter how many tasks are merged or how different those tasks are. In contrast, traditional merging approaches in Euclidean space can cause the spectral norm to either grow or shrink as more tasks are combined, potentially destabilizing the model. This geometric property of OrthoMerge helps prevent such spectral drift.
   </p>
 
 
