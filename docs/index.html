@@ -95,7 +95,7 @@ window.MathJax = {
       OrthoMerge: a Geometrically Principled Framework for Model Merging
     </h2>
     <p style="max-width: 800px; margin: 0 auto; text-align: justify;">
-      Merging finetuned Large Language Models (LLMs) has become increasingly important for integrating diverse capabilities into a single unified model. However, prevailing model merging methods rely on linear arithmetic in Euclidean space, which often destroys the intrinsic geometric properties of pretrained weights, such as hyperspherical energy. To address this, we propose Orthogonal Model Merging (<b><i>OrthoMerge</b></i>), a method that performs merging operations on the Riemannian manifold formed by the orthogonal group to preserve the geometric structure of the model’s weights.
+      Merging finetuned Large Language Models (LLMs) has become increasingly important for integrating diverse capabilities into a single unified model. However, prevailing model merging methods rely on linear arithmetic in Euclidean space, which often destroys the intrinsic geometric properties of pretrained weights, such as hyperspherical energy. To address this, we propose Orthogonal Model Merging (<b><i>OrthoMerge</b></i>), a method that performs merging operations on the Riemannian manifold formed by the orthogonal group to preserve the geometric structure of the model’s weights. By mapping task-specific orthogonal matrices learned by Orthogonal Finetuning (OFT) to the Lie algebra, OrthoMerge enables a principled yet efficient integration that takes into account both the direction and intensity of adaptations. In addition to directly leveraging orthogonal matrices obtained by OFT, we further extend this approach to general models finetuned with non-OFT methods (\eg, low-rank finetuning, full finetuning) via an Orthogonal-Residual Decoupling strategy. This technique extracts the orthogonal components of expert models by solving the orthogonal Procrustes problem, which are then merged on the manifold of the orthogonal group, while the remaining linear residuals are processed through standard additive merging.
     </p>
   </section>
 
@@ -111,18 +111,24 @@ window.MathJax = {
     padding: 0.8em 0;
   ">
     <h2 style="border-bottom: none; margin: 0; font-size: 2em;">
-      Intuitive Understanding and Motivation of FDA
+      How OrthoMerge Works
     </h2>
   </div>
 </section>
 
       <div style="max-width: 900px; margin: 0 auto; text-align: justify; overflow: hidden;">
       
-        <img src="method.png" 
-             alt="FDA Loss Landscape"
-             style="float: right; width: 100%; margin-left: 1em; margin-top: 1em;border-radius: 8px; vertical-align: top;">
+        <!-- <img src="method.png" 
+             alt="OrthoMerge Method"
+             style="float: right; width: 100%; margin-left: 1em; margin-top: 1em;border-radius: 8px; vertical-align: top;"> -->
+            <div style="width: 48%; margin: 0 auto; text-align: center;">
+              <img src="method.png" alt="OrthoMerge Method" style="width: 100%; display: block; margin: 0 auto;">
+              <div style="font-size: 16px; color: #666; margin-top: 8px;">
+                Illustration of OrthoMerge. (a) To merge orthogonal transformations, we first map them to the Lie algebra $\mathfrak{so}(d)$, perform the merging there with magnitude correction to preserve the strength of the transformations, and finally map the result back to the orthogonal group. (b) For general models, we decouple weights into orthogonal and residual components, merging them separately on the Riemannian manifold formed by the orthogonal group and in Euclidean space, respectively.
+              </div>
+            </div>
       
-          <p>
+          <!-- <p>
             To gain an intuitive understanding of FDAs, we compare their optimization trajectories with those of task arithmetic in Figure 2.
             We treat the obtained FDAs as finetuning data and optimize the model parameters accordingly.
             As shown in the right figure, optimizing with FDAs moves the model closer to the local minima of the loss landscape (computed over eight downstream datasets).
@@ -131,9 +137,9 @@ window.MathJax = {
             Moreover, by capturing functional shifts in the input space, FDAs offer greater robustness for model merging.
             Unlike task vectors, which are sensitive to initialization and can drift under different starting points,
             FDAs exhibit robustness to such variations, facilitating more reliable model merging.
-          </p>
+          </p> -->
 
-         <p>
+         <!-- <p>
         Another motivation behind FDAs is that modeling the input
         space is generally easier than modeling the parameter space, as the input space tends to be more
         structured. The effectiveness of modeling the input space for knowledge transfer has been extensively
@@ -146,7 +152,7 @@ window.MathJax = {
         <sup><a href="#ref-zhao2023">Zhao & Bilen, 2023</a></sup>)
         and continual learning (<sup><a href="#ref-shin2017">Shin et al., 2017</a></sup>;
         <sup><a href="#ref-yu2023">Yu et al., 2023</a></sup>).
-      </p>
+      </p> -->
       
       </div>
 </section>
