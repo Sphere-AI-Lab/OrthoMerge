@@ -84,19 +84,10 @@ window.MathJax = {
      style="display: block; margin: 0 auto;">
   <section id="abstract" style="text-align: center;">
     <h2 style="border-bottom: none; margin-bottom: 0.5em;">
-      FDA: A New Framework for Model Merging
+      OrthoMerge: a Geometrically Principled Framework for Model Merging
     </h2>
     <p style="max-width: 800px; margin: 0 auto; text-align: justify;">
-      Model Merging has been an intriguing post-training strategy for integrating knowledge 
-      from existing checkpoints of a shared foundation model. Existing methods focus on 
-      operations in the parameter space (i.e., task vectors), thereby suffering from the complexity 
-      of the parameter space. To explore more knowledge utilizations, we propose 
-      <b><i>Functional Dual Anchors (FDAs)</i></b>, a framework (Figure 1) that instead models 
-      the knowledge in the input-representation space. Specifically, FDAs are synthetic inputs 
-      whose induced gradients align with task vectors, capturing task-specific functional shifts 
-      relative to the pretrained model. Then, we use the FDAs to adapt the pretrained model. FDAs provide an alternative perspective on 
-      model merging by extending input-space modeling to this setting and bridging joint 
-      multi-task training and post-hoc merging.
+      Merging finetuned Large Language Models (LLMs) has become increasingly important for integrating diverse capabilities into a single unified model. However, prevailing model merging methods rely on linear arithmetic in Euclidean space, which often destroys the intrinsic geometric properties of pretrained weights, such as hyperspherical energy. To address this, we propose Orthogonal Model Merging (<b><i>OrthoMerge</b></i>), a method that performs merging operations on the Riemannian manifold formed by the orthogonal group to preserve the geometric structure of the model’s weights.
     </p>
   </section>
 
