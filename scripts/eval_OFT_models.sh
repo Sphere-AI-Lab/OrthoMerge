@@ -15,7 +15,7 @@ lm_eval --model hf \
     --confirm_run_unsafe_code
 conda activate bigcode; cd pathTo/bigcode-evaluation-harness
 accelerate launch  main.py \
-  --model pathTo/Llama-3.1-8B_merged/OM_avg_Q_product-C_commonsenseqa_magicoder_socialiqa_scienceqa_numinamath/merged_model \
+  --model pathTo/OrthoMerge_Llama-3.1-8B/merged_model \
   --max_length_generation 4096 \
   --precision bf16 \
   --tasks humanevalplus \

@@ -33,7 +33,7 @@
 
 ## 🔔News
 
-🔥[2026-02-05]: We released our paper, models, and codes.
+🔥[2026-02-06]: We released our paper, models, and codes.
 
 
 
@@ -56,6 +56,27 @@ conda activate OrthoMerge
 cd OrthoMerge
 pip install -r requirements.txt
 ```
+### Models for Merging Experiments
+
+We utilize the following base models and task-specific fine-tuned models for our experiments.
+
+#### 1. Merging OFT Models
+*   **Base Model:** [meta-llama/Llama-3.1-8B](https://huggingface.co/meta-llama/Llama-3.1-8B)
+*   **Task-Specific Adapters:** [SphereLab/Llama-3.1-8B_OFT_adapters](https://huggingface.co/SphereLab/Llama-3.1-8B_OFT_adapters)
+
+#### 2. Merging Non-OFT Models
+
+**Llama 3.2 Experiments:**
+*   **Base Model:** [meta-llama/Llama-3.2-3B](https://huggingface.co/meta-llama/Llama-3.2-3B)
+*   **Task-Specific Models:** [MergeBench Collection (Llama-3.2-3B)](https://huggingface.co/collections/MergeBench/llama-32-3b-models)
+
+**Qwen 2.5 VL Experiments:**
+*   **Base Model:** [Qwen/Qwen2.5-VL-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct)
+*   **Task-Specific Models:**
+    *   [allenai/olmOCR-2-7B-1025](https://huggingface.co/allenai/olmOCR-2-7B-1025)
+    *   [sensenova/SenseNova-SI-1.1-Qwen2.5-VL-7B](https://huggingface.co/sensenova/SenseNova-SI-1.1-Qwen2.5-VL-7B)
+    *   [FreedomIntelligence/HuatuoGPT-Vision-7B-Qwen2.5VL](https://huggingface.co/FreedomIntelligence/HuatuoGPT-Vision-7B-Qwen2.5VL)
+
 
 ### Merge
 ```
