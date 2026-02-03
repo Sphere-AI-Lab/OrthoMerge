@@ -33,7 +33,7 @@
 
 ## 🔔News
 
-🔥[2026-02-1]: We released our paper, models, and codes.
+🔥[2026-02-05]: We released our paper, models, and codes.
 
 
 
