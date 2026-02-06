@@ -104,14 +104,12 @@ bash scripts/OrthoMerge_non_OFT_models.sh
 If you find our work and this codebase helpful, please consider starring this repo and cite:
 
 ```bibtex
-@misc{yang2026orthogonalmodelmerging,
-      title={Orthogonal Model Merging}, 
-      author={Sihan Yang and Kexuan Shi and Weiyang Liu},
-      year={2026},
-      eprint={2602.05943},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2602.05943}, 
+@article{yang2026orthogonalmodelmerging,
+  title     = {Orthogonal Model Merging},
+  author    = {Yang, Sihan and Shi, Kexuan and Liu, Weiyang},
+  year      = {2026},
+  journal   = {arXiv preprint arXiv:2602.05943},
+  url       = {https://arxiv.org/abs/2602.05943}
 }
 ```
 
