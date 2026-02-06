@@ -25,8 +25,8 @@
 
 <p align="center">
   <a href="http://spherelab.ai/OrthoMerge/">🌐 Homepage</a> |
-  <a href="https://arxiv.org/pdf/">📑 Paper</a>  |
-  <a href="https://arxiv.org/abs/">📖 arXiv</a> |
+  <a href="https://arxiv.org/pdf/2602.05943">📑 Paper</a>  |
+  <a href="https://arxiv.org/abs/2602.05943">📖 arXiv</a> |
   <a href="https://huggingface.co/collections/SphereLab/orthomerge">🤗 Models</a> 
 </p>
 
@@ -99,18 +99,21 @@ bash scripts/OrthoMerge_non_OFT_models.sh
 ```
 
 
-<!-- ## 🔗 Citation
+##  Citation
 
-If you find our work and this codebase helpful, please consider starring this repo 🌟 and cite:
+If you find our work and this codebase helpful, please consider starring this repo and cite:
 
 ```bibtex
-@inproceedings{yang2025mmsi,
-  title={MMSI-Bench: A Benchmark for Multi-Image Spatial Intelligence},
-  author={Yang, Sihan and Xu, Runsen and Xie, Yiman and Yang, Sizhe and Li, Mo and Lin, Jingli and Zhu, Chenming and Chen, Xiaochen and Duan, Haodong and Yue, Xiangyu and Lin, Dahua and Wang, Tai and Pang, Jiangmiao},
-  booktitle={ICLR},
-  year={2025}
+@misc{yang2026orthogonalmodelmerging,
+      title={Orthogonal Model Merging}, 
+      author={Sihan Yang and Kexuan Shi and Weiyang Liu},
+      year={2026},
+      eprint={2602.05943},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2602.05943}, 
 }
-``` -->
+```
 
 
 
