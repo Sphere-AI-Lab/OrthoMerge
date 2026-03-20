@@ -48,7 +48,7 @@ We introduce a geometry-preserving model merging framework, called Orthogonal Mo
 
 <p align="center">
   <img src="assets/method.png" alt="teaser2" width="95%">
-  <br><em>An illustration of OrthoMerge. (a) To merge orthogonal transformations, we first map them to the Lie algebra $\mathfrak{so}(d)$, perform the merging there with magnitude correction to preserve the strength of the transformations, and finally map the result back to the orthogonal group. (b) For general models, we decouple weights into orthogonal and residual components, merging them separately on the Riemannian manifold formed by the orthogonal group and in Euclidean space, respectively.</em>
+  <br><em>An illustration of OrthoMerge. (a) To merge orthogonal transformations, we first map them to the Lie algebra SO(d), perform the merging there with magnitude correction to preserve the strength of the transformations, and finally map the result back to the orthogonal group. (b) For general models, we decouple weights into orthogonal and residual components, merging them separately on the Riemannian manifold formed by the orthogonal group and in Euclidean space, respectively.</em>
 </p>
 
 
