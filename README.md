@@ -40,11 +40,17 @@
 ## Introduction
 We introduce a geometry-preserving model merging framework, called Orthogonal Model Merging (OrthoMerge). For models trained with Orthogonal Finetuning (OFT), the orthogonal matrices representing these transformations are explicit. We map task-specific orthogonal transformations into the Lie algebra, where we perform a magnitude-corrected integration that accounts for both the direction and the intensity of the adaptations. Furthermore, we extend this strategy to models finetuned via standard additive methods (e.g., LoRA, full finetuning), where explicit orthogonal transformations are absent. We introduce an Orthogonal-Residual Decoupling strategy that solves the orthogonal Procrustes problem to extract the implicit orthogonal component from finetuned models. This allows us to merge the orthogonal components of the adaptation on the manifold, while handling the residuals by traditional merging in Euclidean space.
 
-![Alt text](assets/teaser.png)
-An intuitive comparison among (a) current model merging, the proposed (b) orthogonal merging and (c) orthogonal-residual decoupling merging.
 
-![Alt text](assets/method.png)
-Illustration of OrthoMerge. (a) To merge orthogonal transformations, we first map them to the Lie algebra $\mathfrak{so}(d)$, perform the merging there with magnitude correction to preserve the strength of the transformations, and finally map the result back to the orthogonal group. (b) For general models, we decouple weights into orthogonal and residual components, merging them separately on the Riemannian manifold formed by the orthogonal group and in Euclidean space, respectively.
+<p align="center">
+  <img src="assets/teaser.png" alt="teaser" width="62%">
+  <br><em>A comparison of (a) current model merging, our (b) orthogonal merging and (c) orthogonal-residual decoupling merging.</em>
+</p>
+
+<p align="center">
+  <img src="assets/method.png" alt="teaser2" width="95%">
+  <br><em>An illustration of OrthoMerge. (a) To merge orthogonal transformations, we first map them to the Lie algebra $\mathfrak{so}(d)$, perform the merging there with magnitude correction to preserve the strength of the transformations, and finally map the result back to the orthogonal group. (b) For general models, we decouple weights into orthogonal and residual components, merging them separately on the Riemannian manifold formed by the orthogonal group and in Euclidean space, respectively.</em>
+</p>
+
 
 ## Quick Start
 
