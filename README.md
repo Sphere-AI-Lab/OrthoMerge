@@ -32,7 +32,7 @@
 
 
 ## 🔔News
-
+🎉[2026-05-01]: OrthoMerge is accepted by ICML 2026.
 🔥[2026-02-06]: We released our paper, models, and codes.
 
 
