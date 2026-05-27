@@ -111,13 +111,12 @@ bash scripts/OrthoMerge_non_OFT_models.sh
 If you find our work and this codebase helpful, please consider starring this repo and cite:
 
 ```bibtex
-@article{yang2026orthogonalmodelmerging,
-  title     = {Orthogonal Model Merging},
-  author    = {Yang, Sihan and Shi, Kexuan and Liu, Weiyang},
-  year      = {2026},
-  journal   = {arXiv preprint arXiv:2602.05943},
-  url       = {https://arxiv.org/abs/2602.05943}
-}
+  @InProceedings{yang2026orthomerge,
+      title={Orthogonal Model Merging},
+      author={Yang, Sihan and Shi, Kexuan and Liu, Weiyang},
+      booktitle={ICML},
+      year={2026}
+  }
 ```
 
 
