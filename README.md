@@ -94,6 +94,57 @@ bash scripts/OrthoMerge_OFT_models.sh
 bash scripts/OrthoMerge_non_OFT_models.sh
 ```
 
+#### Replace SVD with Newton–Schulz Iteration
+
+The SVD-based layer-wise Procrustes step is highly time-consuming, especially for larger models. To speed up this step, the original SVD-based solver can be replaced with Newton–Schulz (NS) iteration. NS iteration significantly improves efficiency while maintaining comparable performance.
+
+##### Original SVD version
+
+```python
+def orthogonal_procrustes_torch_right(W1: torch.Tensor, W0: torch.Tensor) -> torch.Tensor:
+    # Find R such that W0 @ R ≈ W1
+    A = torch.matmul(W0.t(), W1)
+    U, _, Vh = torch.linalg.svd(A, full_matrices=False)
+    return torch.matmul(U, Vh)
+```
+
+##### Newton–Schulz version
+
+```python
+def orthogonal_procrustes_torch_right(
+    W1: torch.Tensor,
+    W0: torch.Tensor,
+    steps: int = 5,
+) -> torch.Tensor:
+    # Find R such that W0 @ R ≈ W1
+    G = torch.matmul(W0.t(), W1)
+
+    # Newton-Schulz coefficients
+    a, b, c = 3.4445, -4.7750, 2.0315
+
+    # Use fp32 for numerical stability
+    X = G.float()
+
+    # Normalize before iteration
+    X /= X.norm() + 1e-7
+
+    # Usually G is square; keep this for rectangular safety
+    transposed = False
+    if X.size(0) > X.size(1):
+        X = X.T
+        transposed = True
+
+    for _ in range(steps):
+        A = X @ X.T
+        B = b * A + c * (A @ A)
+        X = a * X + B @ X
+
+    if transposed:
+        X = X.T
+
+    return X.to(G.dtype)
+```
+
 ### Evaluation
 For evaluation environments using [lmms-eval](https://github.com/EvolvingLMMs-Lab/lmms-eval/tree/main), [lm-eval-harness](https://github.com/EleutherAI/lm-evaluation-harness), [bigcode-eval](https://github.com/bigcode-project/bigcode-evaluation-harness), and [safety-eval](https://github.com/nouhadziri/safety-eval-fork), please follow the setup instructions provided in their respective repositories.
 
